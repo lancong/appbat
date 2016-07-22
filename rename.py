@@ -1,32 +1,39 @@
 # -*- coding: utf-8 -*-
 
 import os
+import random
 import time
 
 import codecs
 
 import sys
 
+import datetime
+
 appnamebak = "appnamebak.log"
+
 
 def getTime_yyyymmddhhmmss():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
 
+# 生成随机整形数字
+def general_randint(min, max):
+    return random.randint(min, max)
 
 # write text to file (default mode 'w')
 def writetext(data, fileParentPath, fileName, mode="a", newline=True):
     mkdirs(fileParentPath)
     # nowFilePath = fileParentPath + fileName
-    nowFilePath = os.path.join(fileParentPath, fileName)
+    nowfilepath = os.path.join(fileParentPath, fileName)
     writer = None
     try:
-        writer = codecs.open(nowFilePath, mode, "utf-8")
+        writer = codecs.open(nowfilepath, mode, "utf-8")
         writer.write(data)
         if newline:
             writer.write("\r\n")
         writer.flush()
     except:
-        print("write file to " + nowFilePath + " error")
+        print("write file to " + nowfilepath + " error")
     finally:
         if writer is not None:
             writer.close()
@@ -69,6 +76,7 @@ def getdirlistfiles(dirpath, filter="apk"):
 def rename(appname, reappanme):
     os.system("rename " + appname + " " + reappanme)
     # os.system("mv " + appname + " " + reappanme)
+    print(getTime_yyyymmddhhmmss() + " " + appname + " rename --->> " + reappanme)
 
 
 def getcurrentdirpath():
@@ -85,14 +93,19 @@ def recodeHistoryName(dirpath, filter="apk"):
     deletefile(beforappnamesfile)
 
     appnames = getdirlistfiles(dirpath)
-    count = 0
+    randnum = general_randint(1000, 9999)
+    count = randnum
     for name in appnames:
         count += 1
-        print(str(count) + "," + name)
+        # print(str(count) + "," + name)
         recodeinfo = str(count) + "," + name
         writetext(recodeinfo, dirpath, appnamebak)
         pass
     pass
+
+# 当前时间戳
+def getNowTimeStamp():
+    return int(time.mktime(datetime.datetime.now().timetuple()))
 
 
 def valid(obj):
@@ -101,7 +114,7 @@ def valid(obj):
     return False
 
 
-def validList(obj):
+def validlist(obj):
     if obj is not None and len(obj) > 0:
         return True
     return False
@@ -114,8 +127,9 @@ def fileexist(filepath):
 
 
 targetpath = sys.argv[1]
-# targetpath = "/Users/Lan/AndroidTemp/Test"
-# type = 1
+# targetpath = "/Users/Lan/DownLoads"
+# type = 2
+# 1 rename;2 name back
 type = sys.argv[2]
 
 type = int(type)
@@ -128,10 +142,10 @@ if os.path.exists(beforappnamespath):
         index = appname.find(",")
         if index != -1:
             oldname = appname[index + 1:]
-            print("oldname:"+oldname)
+            # print("oldname:" + oldname)
             newname = appname[0:index]
             newnameadd = newname + ".apk"
-            print("newname:"+newnameadd)
+            # print("newname:" + newnameadd)
             if type == 1:
                 oldname = os.path.join(targetpath, oldname)
                 if fileexist(oldname):
@@ -140,10 +154,7 @@ if os.path.exists(beforappnamespath):
                 newnameadd = os.path.join(targetpath, newnameadd)
                 if fileexist(newnameadd):
                     rename(newnameadd, oldname)
-                pass
-            pass
-        pass
-    pass
 else:
+    print(getTime_yyyymmddhhmmss() + " bak app names")
     recodeHistoryName(targetpath)
     pass

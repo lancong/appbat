@@ -1,4 +1,4 @@
-# -*- coding: gbk -*-
+# -*- coding: utf-8 -*-
 import codecs
 import os
 import sys
@@ -7,6 +7,10 @@ import time
 
 def getTime_yyyymmddhhmmss():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
+
+
+def getTime_yyyymmdd():
+    return time.strftime("%Y%m%d", time.localtime(time.time()))
 
 
 def isrange(apkname, start, end):
@@ -76,6 +80,10 @@ def validList(obj):
     return False
 
 
+def createapkname(start, end):
+    pass
+
+
 def initadb():
     # os.system("adb kill-server")
     # os.system("adb start-server")
@@ -99,25 +107,29 @@ def isinstall(hasinstallfile, apkname):
 
 # ------- devide line -------
 
-hasinstallfile = "hasinstallapp.txt"
+hasinstallfile = "hasinstallapp_" + str(getTime_yyyymmdd()) + ".log"
 
 filepath = str(sys.argv[1])
 # filepath = "/Users/Lan/AndroidTemp/Test"
-start = str(sys.argv[2])
+# start = str(sys.argv[2])
+during = str(sys.argv[2])
+during = int(during)
 # start = 1
-end = str(sys.argv[3])
+# end = str(sys.argv[3])
 # end = 4
 
-print(getTime_yyyymmddhhmmss() + " °²×°ÎÄ¼þÂ·¾¶:" + filepath)
-print(getTime_yyyymmddhhmmss() + " °²×°ÎÄ¼þ¿ªÊ¼Î»ÖÃ:" + str(start))
-print(getTime_yyyymmddhhmmss() + " °²×°ÎÄ¼þ½áÊøÎ»ÖÃ:" + str(end))
+print(getTime_yyyymmddhhmmss() + " å®‰è£…æ–‡ä»¶è·¯å¾„:" + filepath)
+# print(getTime_yyyymmddhhmmss() + " å®‰è£…æ–‡ä»¶å¼€å§‹ä½ç½®:" + str(start))
+# print(getTime_yyyymmddhhmmss() + " å®‰è£…æ–‡ä»¶ç»“æŸä½ç½®:" + str(end))
 
 initadb()
 
-print(getTime_yyyymmddhhmmss() + " ¼´½«¿ªÊ¼°²×° ...")
-time.sleep(3)
+print(getTime_yyyymmddhhmmss() + " å³å°†å¼€å§‹å®‰è£… ...")
+# time.sleep(3)
 
 print("\t\n")
+
+count = 0
 
 if os.path.exists(filepath):
     files = os.listdir(filepath)
@@ -126,8 +138,12 @@ if os.path.exists(filepath):
         if isinstall(hasinstallfile, file):
             continue
         if ".apk" in file:
-            if isrange(file, start, end):
-                print(getTime_yyyymmddhhmmss() + " --> ÕýÔÚ°²×°: " + file)
-                os.system("adb install " + os.path.join(filepath, file))
-                writetext(file, filepath, hasinstallfile)
-                print("\t\n")
+            count += 1
+            # if isrange(file, start, end):
+            print(getTime_yyyymmddhhmmss() + " --> æ­£åœ¨å®‰è£…: " + file + " [" + str(count) + "/" + str(during) + "]")
+            os.system("adb install " + os.path.join(filepath, file))
+            writetext(file, filepath, hasinstallfile)
+            print("\t\n")
+            if during == count:
+                print(str(during) + " apps install finish ...")
+                break
