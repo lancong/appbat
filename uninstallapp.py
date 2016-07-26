@@ -20,20 +20,23 @@ def uninstall(packagename):
 
 # find all app
 def findallapplist():
-    return os.popen("adb shell pm -l")
+    # 返回设备上所有app
+    # return os.popen("adb shell pm -l")
+    # 返回设备上第三方应用
+    return os.popen("adb shell pm  list packages -3")
 
 
 # 手机系统保留app(不建议修改)
-sysfilter = ['com.android', 'com.google', 'com.xiaomi', 'com.miui', 'com.mipay', 'android', 'com.trafficctr',
-             'com.milink', 'com.stability', 'com.mediatek', 'com.wingtech', 'com.svox', 'com.lbe',
-             'com.example.browseprocessinfo', 'com.leadcore', 'com.lge', 'com.qualcomm', 'jp.co', 'com.huawei']
-
-
-def issystemapp(packagename):
-    for ft in sysfilter:
-        if ft in packagename:
-            return True
-    return False
+# sysfilter = ['com.android', 'com.google', 'com.xiaomi', 'com.miui', 'com.mipay', 'android', 'com.trafficctr',
+#              'com.milink', 'com.stability', 'com.mediatek', 'com.wingtech', 'com.svox', 'com.lbe',
+#              'com.example.browseprocessinfo', 'com.leadcore', 'com.lge', 'com.qualcomm', 'jp.co', 'com.huawei']
+#
+#
+# def issystemapp(packagename):
+#     for ft in sysfilter:
+#         if ft in packagename:
+#             return True
+#     return False
 
 
 # add filter to appname
@@ -63,8 +66,9 @@ for app in applists:
     if -1 == index:
         continue
     app = app[index + 1:].strip()
-    if issystemapp(app):
-        continue
+    # print("app: " + app)
+    # if issystemapp(app):
+    #     continue
     if filter(app, listfilter):
         continue
     rss = uninstall(app)

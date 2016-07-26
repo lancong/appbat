@@ -3,12 +3,10 @@
 import os
 import random
 import time
-
 import codecs
-
 import sys
-
 import datetime
+import re
 
 appnamebak = "appnamebak.log"
 
@@ -16,9 +14,11 @@ appnamebak = "appnamebak.log"
 def getTime_yyyymmddhhmmss():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
 
+
 # 生成随机整形数字
 def general_randint(min, max):
     return random.randint(min, max)
+
 
 # write text to file (default mode 'w')
 def writetext(data, fileParentPath, fileName, mode="a", newline=True):
@@ -74,7 +74,7 @@ def getdirlistfiles(dirpath, filter="apk"):
 
 
 def rename(appname, reappanme):
-    os.system("rename " + appname + " " + reappanme)
+    os.system("rename " + appname + ' "' + reappanme + '"')
     # os.system("mv " + appname + " " + reappanme)
     print(getTime_yyyymmddhhmmss() + " " + appname + " rename --->> " + reappanme)
 
@@ -102,6 +102,7 @@ def recodeHistoryName(dirpath, filter="apk"):
         writetext(recodeinfo, dirpath, appnamebak)
         pass
     pass
+
 
 # 当前时间戳
 def getNowTimeStamp():
@@ -138,10 +139,12 @@ beforappnamespath = os.path.join(targetpath, appnamebak)
 if os.path.exists(beforappnamespath):
     appnames = open(beforappnamespath)
     for appname in appnames:
-        appname = appname.strip("\r\n")
+        appname = appname.strip()
         index = appname.find(",")
         if index != -1:
             oldname = appname[index + 1:]
+            regex="\s+"
+            oldname = re.sub(regex,"\" \"",oldname)
             # print("oldname:" + oldname)
             newname = appname[0:index]
             newnameadd = newname + ".apk"
